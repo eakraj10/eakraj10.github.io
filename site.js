@@ -12,14 +12,16 @@ dialog.addEventListener('click', e => {
 });
 dialog.addEventListener('close', () => lastTrigger?.focus());
 
-// Open/closed status (truck hours: every day 11:00–22:00, Pacific time)
+// Open/closed status (truck hours: Tue–Sun 10:30–22:00, closed Monday, Pacific time)
 const status = document.querySelector('[data-status]');
 if (status) {
-  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
-  const h = +parts.find(p => p.type === 'hour').value;
-  const open = h >= 11 && h < 22;
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
+  const get = type => parts.find(p => p.type === type).value;
+  const day = get('weekday'), mins = +get('hour') * 60 + +get('minute');
+  const open = day !== 'Mon' && mins >= 630 && mins < 1320;
+  const next = day === 'Mon' || (day === 'Sun' && mins >= 1320) ? 'opens Tuesday 10:30 AM' : mins < 630 ? 'opens 10:30 AM' : 'opens tomorrow 10:30 AM';
   status.classList.toggle('is-open', open);
-  status.querySelector('[data-status-text]').textContent = open ? 'Open now · until 10 PM' : 'Closed now · opens 11 AM';
+  status.querySelector('[data-status-text]').textContent = open ? 'Open now · until 10 PM' : `Closed now · ${next}`;
 }
 
 // Highlight the current menu section tab
