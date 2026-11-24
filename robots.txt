@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# The owner's personal portfolio is served from this domain by GitHub Pages; keep it out of restaurant search results.
+Disallow: /Portfolio/
+
+Sitemap: https://asianmomohousetruck.com/sitemap.xml
